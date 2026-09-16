@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Quote History</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            ✨ QuoteHub
+        </div>
+
+        <div class="nav-links">
+
+            <a href="{{ url_for('index') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('history') }}">
+                History
+            </a>
+
+            <button onclick="toggleDarkMode()"
+                    class="theme-btn">
+                🌙
+            </button>
+
+        </div>
+
+    </nav>
+
+
+    <main class="container">
+
+        <section class="history-header">
+
+            <h1>
+                Quote History
+            </h1>
+
+            <p>
+                All the quotes you've discovered.
+            </p>
+
+        </section>
+
+
+        <form method="GET"
+              action="{{ url_for('history') }}"
+              class="search-box">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search quotes or authors..."
+                value="{{ search }}"
+            >
+
+            <button type="submit">
+                🔍 Search
+            </button>
+
+        </form>
+
+
+        {% if quotes %}
+
+        <div class="history-list">
+
+            {% for quote in quotes %}
+
+            <div class="history-card">
+
+                <div class="history-content">
+
+                    <p class="history-quote">
+                        “{{ quote.quote }}”
+                    </p>
+
+                    <p class="history-author">
+                        — {{ quote.author }}
+                    </p>
+
+                    <small>
+                        Saved on {{ quote.created_at }}
+                    </small>
+
+                </div>
+
+
+                <div class="history-actions">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('favorite', quote_id=quote.id) }}"
+                    >
+
+                        <button
+                            type="submit"
+                            class="icon-btn"
+                            title="Favorite"
+                        >
+
+                            {% if quote.is_favorite %}
+                                ❤️
+                            {% else %}
+                                🤍
+                            {% endif %}
+
+                        </button>
+
+                    </form>
+
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('delete_quote', quote_id=quote.id) }}"
+                        onsubmit="return confirmDelete()"
+                    >
+
+                        <button
+                            type="submit"
+                            class="icon-btn delete-btn"
+                            title="Delete"
+                        >
+
+                            🗑️
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                📭
+            </div>
+
+            <h2>
+                No quotes found
+            </h2>
+
+            <p>
+                Your quote history is empty.
+            </p>
+
+            <a href="{{ url_for('index') }}"
+               class="btn primary-btn">
+
+                Discover Quotes
+
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            QuoteHub © 2026 | Built with Flask & SQLite
+        </p>
+
+    </footer>
+
+
+    <script src="{{ url_for('static', filename='script.js') }}">
+    </script>
+
+</body>
+
+</html>
